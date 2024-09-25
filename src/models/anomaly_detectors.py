@@ -42,12 +42,7 @@ class AutoencoderDetector:
         x = layers.UpSampling2D((2, 2))(x)
         x = layers.Conv2D(32, (3, 3), activation="relu", padding="same")(x)
         x = layers.UpSampling2D((2, 2))(x)
-        decoded = layers.Conv2D(1, (3, 3), activation="sigmoid", padding="same")(x)
-
-        # Ensure the output shape matches the input shape
-        output_shape = decoded.shape[1:]
-        if output_shape != input_shape:
-            decoded = layers.Resizing(input_shape[0], input_shape[1])(decoded)
+        decoded = layers.Conv2D(input_shape[-1], (3, 3), activation="linear", padding="same")(x)
 
         autoencoder = keras.Model(input_layer, decoded)
         autoencoder.compile(optimizer="adam", loss="mse")
